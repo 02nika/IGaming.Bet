@@ -9,8 +9,9 @@
 # Design decisions and challenges:
   1) I've decide to create layering architecture, so there is presentation, service and repository layers.
   2) I also Used ef core for ORM and Fluent Api.
-  3) For betting, I thought That will be better If I would create integration layer for future gaming providers. Service layer has controll for providers layer.
+  3) For betting, I thought That will be better If I would create integration layer for future gaming providers. Service layer has access for providers layer.
   4) Also I just used simple exception middleware, I think that middleware will be anough for testing purposes, so i didn't add other middlewares like: audit logging, or rate limiting.
+  5) I used Xunit Nuget for unit testing. I just create service layer unit tests to check my unit test skills.
   
 # Other
   1) There is 4 endpoints just like in exercise.
