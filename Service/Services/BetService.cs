@@ -29,35 +29,39 @@ public class BetService : IBetService
         
         if (user.Balance.Amount < betDto.Amount) throw new BalanceNotEnoughException();
         
-        var newAmount = _integrationManager.SekaBet.Bet(betDto.Amount);
-        
-        user.Balance.Amount += newAmount - betDto.Amount;
+        var winAmount = _integrationManager.SekaBet.Bet(betDto.Amount);
+
+        SetAmount(user, winAmount, betDto.Amount);
         _repositoryManager.UserRepository.UpdateUser(user);
 
-        var bet = _mapper.Map<Bet>(betDto);
-        bet.UserId = user.Id;
-        bet.WinAmount = newAmount;
-        await _repositoryManager.BetRepository.AddBetAsync(bet);
+        var bet = BetInstance(betDto, user.Id, winAmount);
         
+        await _repositoryManager.BetRepository.AddBetAsync(bet);
         await _repositoryManager.SaveAsync();
         
-        return newAmount;
+        return winAmount;
     }
-    
-    public async Task<BetDto> GetBetAsync(int betId)
+
+    private void SetAmount(User user, decimal winAmount, decimal betAmount)
+    {
+        user.Balance.Amount += winAmount - betAmount;
+    }
+
+    private Bet BetInstance(BetDto betDto, int userId, decimal winAmount)
+    {
+        var bet = _mapper.Map<Bet>(betDto);
+        bet.UserId = userId;
+        bet.WinAmount = winAmount;
+
+        return bet;
+    }
+
+    public async Task<BetDtoResponse> GetBetAsync(int betId)
     {
         var bet = await _repositoryManager.BetRepository.GetBetAsync(betId);
             
         if (bet is null) throw new BetNotFoundException();
 
-        return _mapper.Map<BetDto>(bet);
-    }
-
-    public async Task AddBetAsync(AddBetDto betDto)
-    {
-        var bet = _mapper.Map<Bet>(betDto);
-
-        await _repositoryManager.BetRepository.AddBetAsync(bet);
-        await _repositoryManager.SaveAsync();
+        return _mapper.Map<BetDtoResponse>(bet);
     }
 }

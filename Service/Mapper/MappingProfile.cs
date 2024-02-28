@@ -21,5 +21,7 @@ public class MappingProfile : Profile
         CreateMap<Bet, BetDto>().ReverseMap()
             .ForMember(bet => bet.BetAmount, dto => dto
                 .MapFrom(u => u.Amount));
+
+        CreateMap<Bet, BetDtoResponse>();
     }
 }

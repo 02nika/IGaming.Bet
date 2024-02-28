@@ -5,6 +5,5 @@ namespace Service.Contracts;
 public interface IBetService
 {
     Task<decimal> BetAsync(BetDto betDto, int userId);
-    Task<BetDto> GetBetAsync(int betId);
-    Task AddBetAsync(AddBetDto betDto);
+    Task<BetDtoResponse> GetBetAsync(int betId);
 }
